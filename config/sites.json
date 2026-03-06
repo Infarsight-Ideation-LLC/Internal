@@ -1,0 +1,22 @@
+{
+  "sites": [
+    {
+      "siteName": "EPBC Act public portal",
+      "region": "APAC",
+      "country":"Australia",
+      "siteURL": "https://epbcpublicportal.environment.gov.au/all-referrals/",
+      "industryType":"Energy Generation and Supply (renewable)",
+      "NoOfDays":50,
+      "valid": "Yes",
+      "isLoginRequired": false
+    },
+    {
+      "siteName": "ASX",
+      "region": "APAC",
+      "country":"Australia",
+      "siteURL": "https://www.asx.com.au/markets/trade-our-cash-market/todays-announcements",
+      "valid": "No",
+      "isLoginRequired": false
+    }
+  ]
+}
