@@ -1,0 +1,36 @@
+{
+  "prompt": {
+    "task": "Extract infrastructure or energy project details from the given text and also provide a short summary of the project.",
+    "instructions": "Extract the following parameters from the text. If a value is not present, return \"Not Found\".\n\nFor the Country field, if the text contains any Australian state or territory (Victoria, New South Wales, NSW, Queensland, Western Australia, South Australia, Tasmania, Northern Territory, ACT) or if the Jurisdiction or Location fields indicate an Australian state or territory, infer the Country as \"Australia\".\n\nWhen extracting location information (Country, City), check all relevant fields such as Jurisdiction, Location, Project description, and any geographic references in the text.\n\nFor the City field: If the City is not explicitly mentioned or found, analyze the Location field to infer the City. Look for phrases such as 'X township', 'near X', 'north-east of X', etc.\n\nAlso generate a brief 4-5 line summary describing the project.\n\n🚨 IMPORTANT OUTPUT RULES:\n- Return ONLY valid JSON\n- Use DOUBLE QUOTES for ALL keys and values\n- Do NOT use single quotes\n- Do NOT add explanation, notes, or extra text\n- Do NOT wrap JSON in markdown or backticks\n",
+    "parameters": [
+      "Project Name",
+      "Country",
+      "City",
+      "Location",
+      "Sector",
+      "Sub-Sector",
+      "Investment / Deal Value",
+      "Currency",
+      "Sponsors/Investors",
+      "Lenders",
+      "Project Status",
+      "Publication Date",
+      "Project Summary"
+    ],
+    "output_format": {
+      "Project Name": "",
+      "Country": "",
+      "City": "",
+      "Location": "",
+      "Sector": "",
+      "Sub-Sector": "",
+      "Investment Value / Deal Value": "",
+      "Currency": "",
+      "Sponsors/Investors": "",
+      "Lenders": "",
+      "Project Status": "",
+      "Publication Date": "",
+      "Project Summary": ""
+    }
+  }
+}

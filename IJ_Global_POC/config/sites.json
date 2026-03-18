@@ -1,0 +1,23 @@
+{
+  "sites": [
+    {
+      "siteName": "EPBC Act public portal",
+      "region": "APAC",
+      "country":"Australia",
+      "siteURL": "https://epbcpublicportal.environment.gov.au/all-referrals/",
+      "industryType": ["Energy Generation and Supply (renewable)", "Energy Generation and Supply (non-renewable)"],
+      "NoOfDays":20,
+      "valid": "Yes",
+      "isLoginRequired": false
+    },
+    {
+      "siteName": "Korea Dart",
+      "region": "APAC",
+      "country":"South Korea",
+      "siteURL": "https://www.asx.com.au/markets/trade-our-cash-market/todays-announcements",
+      "industryType": "Manufacture of medical and dental instruments and supplies",
+      "valid": "No",
+      "isLoginRequired": false
+    }
+  ]
+}
