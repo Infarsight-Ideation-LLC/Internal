@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+ 
+<meta charset="UTF-8">
+ 
+<title>Configurable Scraper</title>
+ 
+<link rel="stylesheet" href="style.css">
+ 
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+ 
+</head>
+ 
+<body>
+ 
+<div class="container">
+ 
+<div class="header">
+ 
+<h2><i class="fa fa-gear"></i> Configurable Scraper & Report Viewer</h2>
+ 
+</div>
+ 
+ 
+<div class="filters">
+ 
+<div class="filter-group">
+ 
+<label>Region</label>
+ 
+<select id="region">
+ 
+<option value="APAC">APAC</option>
+ 
+</select>
+ 
+</div>
+ 
+ 
+<div class="filter-group">
+ 
+<label>Select Country (URL)</label>
+ 
+<select id="country">
+ 
+<option value="https://epbcpublicportal.environment.gov.au/all-referrals/">
+https://epbcpublicportal.environment.gov.au
+</option>
+ 
+<option value="https://englishdart.fss.or.kr/dsba001/mainAll.do">
+https://englishdart.fss.or.kr
+</option>
+ 
+</select>
+ 
+</div>
+ 
+ 
+<div class="filter-group">
+ 
+<label>Industry Type</label>
+ 
+<select id="industry" multiple>
+ 
+<option value="Energy Generation and Supply (renewable)">
+Energy Generation and Supply (renewable)
+</option>
+ 
+<option value="Energy Generation and Supply (non-renewable)">
+Energy Generation and Supply (non-renewable)
+</option>
+ 
+</select>
+ 
+</div>
+ 
+ 
+<div class="filter-group">
+ 
+<label>Number of Days</label>
+ 
+<input type="number" id="days" min="1" max="30" value="7">
+ 
+</div>
+ 
+ 
+<div class="run-btn">
+ 
+<button onclick="runScraper()">
+ 
+<i class="fa fa-play"></i> Run Scraper
+ 
+</button>
+ 
+</div>
+ 
+</div>
+ 
+ 
+<div class="reports">
+ 
+<div class="report-header">
+ 
+<h3>Generated Reports</h3>
+ 
+<input type="text" placeholder="Search reports..." id="search">
+ 
+</div>
+ 
+ 
+<table>
+ 
+<thead>
+ 
+<tr>
+ 
+<th>File Name</th>
+<th>Generated Date</th>
+<th>File Size</th>
+<th>Actions</th>
+ 
+</tr>
+ 
+</thead>
+ 
+<tbody id="reportTable"></tbody>
+ 
+</table>
+ 
+</div>
+ 
+</div>
+ 
+<script src="script.js"></script>
+ 
+</body>
+ 
+</html>

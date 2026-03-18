@@ -41,4 +41,10 @@ Text:
         ]
     )
 
+    # Log token usage
+    if hasattr(response, "usage"):
+        print("Prompt Tokens:", response.usage.prompt_tokens)
+        print("Completion Tokens:", response.usage.completion_tokens)
+        print("Total Tokens:", response.usage.total_tokens)
+
     return response.choices[0].message.content
