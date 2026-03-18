@@ -1,6 +1,10 @@
 import json
+import os
+from dotenv import load_dotenv
 from openai import AzureOpenAI
 
+# Load environment variables
+load_dotenv()
 
 def detect_news_intent(text):
 
@@ -11,14 +15,15 @@ def detect_news_intent(text):
     phrases = relevance["relevanceFilters"]["phrases"]
     keywords = relevance["relevanceFilters"]["keywords"]
 
+    # Azure OpenAI client using ENV
     client = AzureOpenAI(
-        api_key="4Ng4vnx2KNiWNF9PTdG79Df5kWcV3S9Ci62WQvdwh1Dpr4FphNFQJQQJ99CAACHYHv6XJ3w3AAAAACOG2jHs",
-        api_version="2025-01-01-preview",
-        azure_endpoint="https://rs-ai-internal-projects-poc-dev.cognitiveservices.azure.com"
+        api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+        api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
+        azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
     )
 
     response = client.chat.completions.create(
-        model="IFS_Internal_POC_Dev",
+        model=os.getenv("AZURE_OPENAI_DEPLOYMENT"),
         messages=[
             {
                 "role": "user",
@@ -27,7 +32,8 @@ Analyse the following project/news text.
 
 {text}
 
-Determine the intent of the news using these phrases or keywords. Donot provide any explanation.
+Determine the intent of the news using these phrases or keywords.
+Do not provide any explanation.
 
 Phrases:
 {phrases}
@@ -37,7 +43,6 @@ Keywords:
 
 Return:
 1. Detected Intent
-
 """
             }
         ]
