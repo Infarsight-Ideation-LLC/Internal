@@ -11,6 +11,7 @@ from io import BytesIO
 from docx import Document
 import pandas as pd
 
+
 # ---------- PROJECT ROOT ----------
 
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -561,9 +562,10 @@ def show_metadata(file_path):
         st.write(f"**Region:** {region}")
         st.write(f"**Industry Type:** {industry_type}")
         if metadata_loaded and source_url != "N/A":
-            st.write(f"**Source URL:** {source_url[:50]}...")
+            st.markdown( f"**Source URL:** [🔗 Open Link]({source_url})")
     
-    st.markdown("---")
+            
+            
     
     if st.button("❌ Close", use_container_width=True):
 
@@ -773,12 +775,12 @@ if st.session_state.current_tab == "Run Scraper":
             if website == "Korea Dart":
                 # Run Korean scraper
                 process = subprocess.Popen(
-                    ["python","-m","Testkorean"]
+                    [sys.executable,"-m","Testkorean"]
                 )
             else:
                 # Run normal scraper
                 process = subprocess.Popen(
-                    ["python","-m","scripts.scrapper"]
+                    [sys.executable,"-m","scripts.scrapper"]
                 )
     
             progress = 0

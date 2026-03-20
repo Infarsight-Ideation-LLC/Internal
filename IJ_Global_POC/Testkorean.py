@@ -6,23 +6,33 @@ from docx import Document
 from openai import AzureOpenAI
 from dotenv import load_dotenv
 
+# Load .env for LOCAL
+load_dotenv()
 
 URL = "https://englishdart.fss.or.kr/dsbh001/main.do?rcpNo=20260310901403"
-load_dotenv()
+
 # ==============================
-# LOAD SECRETS (SAFE)
+# SAFE ENV LOADER (LOCAL + CLOUD)
 # ==============================
 
-
+def get_env(key):
+    try:
+        import streamlit as st
+        if key in st.secrets:
+            return st.secrets[key]
+    except:
+        pass
+    
+    return os.getenv(key)
 
 # ==============================
 # OPENAI CLIENT
 # ==============================
 
 client = AzureOpenAI(
-    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-    api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
-    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+    api_key=get_env("AZURE_OPENAI_API_KEY"),
+    api_version=get_env("AZURE_OPENAI_API_VERSION"),
+    azure_endpoint=get_env("AZURE_OPENAI_ENDPOINT")
 )
 
 # ==============================
@@ -112,7 +122,7 @@ Output JSON format:
 """
 
     response = client.chat.completions.create(
-        model=os.getenv("AZURE_OPENAI_DEPLOYMENT"),
+        model=get_env("AZURE_OPENAI_DEPLOYMENT"),
         messages=[
             {"role": "system", "content": "You extract structured financial project data."},
             {"role": "user", "content": prompt}

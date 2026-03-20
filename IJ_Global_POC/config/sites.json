@@ -6,7 +6,7 @@
       "country":"Australia",
       "siteURL": "https://epbcpublicportal.environment.gov.au/all-referrals/",
       "industryType": ["Energy Generation and Supply (renewable)", "Energy Generation and Supply (non-renewable)"],
-      "NoOfDays":5,
+      "NoOfDays":15,
       "valid": "Yes",
       "isLoginRequired": false
     },
