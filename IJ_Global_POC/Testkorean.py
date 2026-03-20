@@ -1,32 +1,28 @@
 import os
 import json
-import streamlit as st
 from datetime import datetime
 from playwright.sync_api import sync_playwright
 from docx import Document
 from openai import AzureOpenAI
+from dotenv import load_dotenv
+
 
 URL = "https://englishdart.fss.or.kr/dsbh001/main.do?rcpNo=20260310901403"
-
+load_dotenv()
 # ==============================
 # LOAD SECRETS (SAFE)
 # ==============================
 
-def get_env(key):
-    # Streamlit secrets (for deployment)
-    if key in st.secrets:
-        return st.secrets[key]
-    # Local environment (.env)
-    return os.getenv(key)
+
 
 # ==============================
 # OPENAI CLIENT
 # ==============================
 
 client = AzureOpenAI(
-    api_key=get_env("AZURE_OPENAI_API_KEY"),
-    api_version=get_env("AZURE_OPENAI_API_VERSION"),
-    azure_endpoint=get_env("AZURE_OPENAI_ENDPOINT")
+    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+    api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
+    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
 )
 
 # ==============================
@@ -116,7 +112,7 @@ Output JSON format:
 """
 
     response = client.chat.completions.create(
-        model=get_env("AZURE_OPENAI_DEPLOYMENT"),
+        model=os.getenv("AZURE_OPENAI_DEPLOYMENT"),
         messages=[
             {"role": "system", "content": "You extract structured financial project data."},
             {"role": "user", "content": prompt}
@@ -137,14 +133,12 @@ def create_word(data):
     summary = data["summary"]
     parameters = data["parameters"]
 
-    onedrive_path = os.getenv("OneDriveCommercial") or os.getenv("OneDrive")
-
-    if not onedrive_path:
-        raise Exception("OneDrive folder not found")
-
-    output_folder = os.path.join(onedrive_path, "IJ Global Extracted File")
-
+    #onedrive_path = os.getenv("OneDriveCommercial") or os.getenv("OneDrive")
+    # ✅ LOCAL OUTPUT FOLDER
+    output_folder = "output"
     os.makedirs(output_folder, exist_ok=True)
+
+
 
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -203,7 +197,7 @@ def create_word(data):
     with open(json_file_path, "w") as json_file:
         json.dump(metadata, json_file, indent=2)
 
-    print("Word file saved to OneDrive:", file_path)
+    print("Word file saved:", file_path)
     print("Metadata saved to:", json_file_path)
 
 # ==============================

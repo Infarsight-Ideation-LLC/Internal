@@ -758,8 +758,11 @@ if st.session_state.current_tab == "Run Scraper":
     
             record_counter.metric("Processed Records", 0)
     
-            onedrive_path = os.getenv("OneDriveCommercial") or os.getenv("OneDrive")
-            output_dir = os.path.join(onedrive_path,"IJ Global Extracted File")
+            #onedrive_path = os.getenv("OneDriveCommercial") or os.getenv("OneDrive")
+            #output_dir = os.path.join(onedrive_path,"IJ Global Extracted File")
+
+            output_dir = "output"
+            os.makedirs(output_dir, exist_ok=True)
     
             # initial file count
             initial_files = 0
@@ -891,76 +894,71 @@ elif st.session_state.current_tab == "Past Reports":
         
         st.header("🔎 Filter Reports")
         
-        onedrive_path = os.getenv("OneDriveCommercial") or os.getenv("OneDrive")
-        
-        if onedrive_path:
-            output_dir = os.path.join(onedrive_path,"IJ Global Extracted File")
-            
-            if os.path.exists(output_dir):
-                all_reports = glob.glob(os.path.join(output_dir,"*.docx"))
-                
-                # Load all metadata
-                all_metadata = []
-                for report in all_reports:
-                    json_file = report.replace(".docx", ".json")
-                    if os.path.exists(json_file):
-                        try:
-                            with open(json_file, "r") as f:
-                                metadata = json.load(f)
-                                all_metadata.append(metadata)
-                        except:
-                            pass
-                
-                # Extract unique values for filters
-                countries = sorted(list(set([m.get("country", "N/A") for m in all_metadata if m.get("country")])))
-                regions = sorted(list(set([m.get("region", "N/A") for m in all_metadata if m.get("region")])))
-                industries = sorted(list(set([m.get("industry_type", "N/A") for m in all_metadata if m.get("industry_type")])))
-                websites = sorted(list(set([m.get("website", "N/A") for m in all_metadata if m.get("website")])))
-                
-                # Search by filename
-                search_term = st.text_input("📄 Search by Filename", placeholder="Enter File Name")
-                
-                # Country filter
-                selected_country = st.selectbox(
-                    "🌍 Country",
-                    ["All Countries"] + countries,
-                    index=0
-                )
-                
-                # Region filter
-                selected_region = st.selectbox(
-                    "📍 Region",
-                    ["All Regions"] + regions,
-                    index=0
-                )
-                
-                # Industry Type filter
-                selected_industry = st.selectbox(
-                    "🏭 Industry Type",
-                    ["All Industries"] + industries,
-                    index=0
-                )
-                
-                # Website filter
-                selected_website = st.selectbox(
-                    "🔗 Website",
-                    ["All Websites"] + websites,
-                    index=0
-                )
-                
-                # Date filter
-                date_filter = st.selectbox(
-                    "📅 Generated Date",
-                    ["All Dates", "Today", "Last 7 Days", "Last 30 Days"],
-                    index=0
-                )
-            else:
-                search_term = ""
-                selected_country = "All Countries"
-                selected_region = "All Regions"
-                selected_industry = "All Industries"
-                selected_website = "All Websites"
-                date_filter = "All Dates"
+        #onedrive_path = os.getenv("OneDriveCommercial") or os.getenv("OneDrive")
+
+        output_dir = "output"
+        os.makedirs(output_dir, exist_ok=True)
+
+        if os.path.exists(output_dir):
+
+            all_reports = glob.glob(os.path.join(output_dir, "*.docx"))
+
+            # Load all metadata
+            all_metadata = []
+            for report in all_reports:
+                json_file = report.replace(".docx", ".json")
+                if os.path.exists(json_file):
+                    try:
+                        with open(json_file, "r") as f:
+                            metadata = json.load(f)
+                            all_metadata.append(metadata)
+                    except:
+                        pass
+
+            # Extract unique values for filters
+            countries = sorted(list(set([m.get("country", "N/A") for m in all_metadata if m.get("country")])))
+            regions = sorted(list(set([m.get("region", "N/A") for m in all_metadata if m.get("region")])))
+            industries = sorted(list(set([m.get("industry_type", "N/A") for m in all_metadata if m.get("industry_type")])))
+            websites = sorted(list(set([m.get("website", "N/A") for m in all_metadata if m.get("website")])))
+
+            # Search by filename
+            search_term = st.text_input("📄 Search by Filename", placeholder="Enter File Name")
+
+            # Country filter
+            selected_country = st.selectbox(
+                "🌍 Country",
+                ["All Countries"] + countries,
+                index=0
+            )
+
+            # Region filter
+            selected_region = st.selectbox(
+                "📍 Region",
+                ["All Regions"] + regions,
+                index=0
+            )
+
+            # Industry Type filter
+            selected_industry = st.selectbox(
+                "🏭 Industry Type",
+                ["All Industries"] + industries,
+                index=0
+            )
+
+            # Website filter
+            selected_website = st.selectbox(
+                "🔗 Website",
+                ["All Websites"] + websites,
+                index=0
+            )
+
+            # Date filter
+            date_filter = st.selectbox(
+                "📅 Generated Date",
+                ["All Dates", "Today", "Last 7 Days", "Last 30 Days"],
+                index=0
+            )
+
         else:
             search_term = ""
             selected_country = "All Countries"
@@ -969,151 +967,157 @@ elif st.session_state.current_tab == "Past Reports":
             selected_website = "All Websites"
             date_filter = "All Dates"
     
-    # ---------- MAIN AREA - ALL REPORTS ----------
-    
+    # ---------- MAIN AREA - ALL REPORTS ---------- 
+
     st.subheader("📚 All Generated Reports")
-    
-    onedrive_path = os.getenv("OneDriveCommercial") or os.getenv("OneDrive")
-    
-    if onedrive_path:
-        
-        output_dir = os.path.join(onedrive_path,"IJ Global Extracted File")
-        
-        if os.path.exists(output_dir):
-            
-            all_reports = glob.glob(os.path.join(output_dir,"*.docx"))
-            
-            if all_reports:
-                
-                # Load metadata for all reports
-                reports_with_metadata = []
-                for report in all_reports:
-                    json_file = report.replace(".docx", ".json")
-                    metadata = {}
-                    if os.path.exists(json_file):
+
+    output_dir = "output"
+
+    if os.path.exists(output_dir):
+
+        all_reports = glob.glob(os.path.join(output_dir, "*.docx"))
+
+        if all_reports:
+
+            # Load metadata for all reports
+            reports_with_metadata = []
+            for report in all_reports:
+                json_file = report.replace(".docx", ".json")
+                metadata = {}
+
+                if os.path.exists(json_file):
+                    try:
+                        with open(json_file, "r") as f:
+                            metadata = json.load(f)
+                    except:
+                        pass
+
+                reports_with_metadata.append({
+                    "path": report,
+                    "metadata": metadata
+                })
+
+            # Apply filters
+            filtered_reports = reports_with_metadata
+
+            if search_term:
+                filtered_reports = [
+                    r for r in filtered_reports 
+                    if search_term.lower() in os.path.basename(r["path"]).lower()
+                ]
+
+            if selected_country != "All Countries":
+                filtered_reports = [
+                    r for r in filtered_reports 
+                    if r["metadata"].get("country") == selected_country
+                ]
+
+            if selected_region != "All Regions":
+                filtered_reports = [
+                    r for r in filtered_reports 
+                    if r["metadata"].get("region") == selected_region
+                ]
+
+            if selected_industry != "All Industries":
+                filtered_reports = [
+                    r for r in filtered_reports 
+                    if r["metadata"].get("industry_type") == selected_industry
+                ]
+
+            if selected_website != "All Websites":
+                filtered_reports = [
+                    r for r in filtered_reports 
+                    if r["metadata"].get("website") == selected_website
+                ]
+
+            if date_filter != "All Dates":
+                today = datetime.now().date()
+                filtered_by_date = []
+
+                for r in filtered_reports:
+                    gen_date_str = r["metadata"].get("generated_date", "")
+
+                    if gen_date_str:
                         try:
-                            with open(json_file, "r") as f:
-                                metadata = json.load(f)
+                            gen_date = datetime.strptime(gen_date_str, "%Y-%m-%d %H:%M:%S").date()
+
+                            if date_filter == "Today" and gen_date == today:
+                                filtered_by_date.append(r)
+                            elif date_filter == "Last 7 Days" and (today - gen_date).days <= 7:
+                                filtered_by_date.append(r)
+                            elif date_filter == "Last 30 Days" and (today - gen_date).days <= 30:
+                                filtered_by_date.append(r)
                         except:
                             pass
-                    reports_with_metadata.append({
-                        "path": report,
-                        "metadata": metadata
-                    })
-                
-                # Apply filters
-                filtered_reports = reports_with_metadata
-                
-                # Search filter
-                if search_term:
-                    filtered_reports = [r for r in filtered_reports if search_term.lower() in os.path.basename(r["path"]).lower()]
-                
-                # Country filter
-                if selected_country != "All Countries":
-                    filtered_reports = [r for r in filtered_reports if r["metadata"].get("country") == selected_country]
-                
-                # Region filter
-                if selected_region != "All Regions":
-                    filtered_reports = [r for r in filtered_reports if r["metadata"].get("region") == selected_region]
-                
-                # Industry filter
-                if selected_industry != "All Industries":
-                    filtered_reports = [r for r in filtered_reports if r["metadata"].get("industry_type") == selected_industry]
-                
-                # Website filter
-                if selected_website != "All Websites":
-                    filtered_reports = [r for r in filtered_reports if r["metadata"].get("website") == selected_website]
-                
-                # Date filter
-                if date_filter != "All Dates":
-                    today = datetime.now().date()
-                    filtered_by_date = []
-                    
+
+                filtered_reports = filtered_by_date
+
+            filtered_reports.sort(
+                key=lambda x: os.path.getmtime(x["path"]), 
+                reverse=True
+            )
+
+            st.write(f"Showing {len(filtered_reports)} of {len(all_reports)} reports")
+
+            if filtered_reports:
+                zip_buffer = BytesIO()
+
+                with zipfile.ZipFile(zip_buffer, "w") as z:
                     for r in filtered_reports:
-                        gen_date_str = r["metadata"].get("generated_date", "")
-                        if gen_date_str:
-                            try:
-                                gen_date = datetime.strptime(gen_date_str, "%Y-%m-%d %H:%M:%S").date()
-                                
-                                if date_filter == "Today" and gen_date == today:
-                                    filtered_by_date.append(r)
-                                elif date_filter == "Last 7 Days" and (today - gen_date).days <= 7:
-                                    filtered_by_date.append(r)
-                                elif date_filter == "Last 30 Days" and (today - gen_date).days <= 30:
-                                    filtered_by_date.append(r)
-                            except:
-                                pass
-                    
-                    filtered_reports = filtered_by_date
-                
-                # Sort by modification time (newest first)
-                filtered_reports.sort(key=lambda x: os.path.getmtime(x["path"]), reverse=True)
-                
-                st.write(f"Showing {len(filtered_reports)} of {len(all_reports)} reports")
-                
-                # Download all filtered reports
-                if filtered_reports:
-                    zip_buffer = BytesIO()
-                    with zipfile.ZipFile(zip_buffer,"w") as z:
-                        for r in filtered_reports:
-                            z.write(r["path"], os.path.basename(r["path"]))
-                    
-                    st.download_button(
-                        "⬇️ Download All Filtered Reports",
-                        zip_buffer.getvalue(),
-                        file_name="IJ_Global_Reports.zip"
-                    )
-                
+                        z.write(r["path"], os.path.basename(r["path"]))
+
+                st.download_button(
+                    "⬇️ Download All Filtered Reports",
+                    zip_buffer.getvalue(),
+                    file_name="IJ_Global_Reports.zip"
+                )
+
+            st.divider()
+
+            for report_item in filtered_reports[:50]:
+
+                report = report_item["path"]
+                metadata = report_item["metadata"]
+
+                name = os.path.basename(report)
+                size = os.path.getsize(report) / 1024
+                time_mod = datetime.fromtimestamp(os.path.getmtime(report))
+
+                c1, c2, c3, c4, c5, c6 = st.columns([2.5, 2, 1, 0.5, 0.5, 0.5])
+
+                with c1:
+                    st.write(f"📄 {name}")
+
+                with c2:
+                    st.write(time_mod.strftime("%Y-%m-%d %H:%M"))
+
+                with c3:
+                    st.write(f"{size:.1f} KB")
+
+                with c4:
+                    if st.button("👁", key=f"preview_past_{name}"):
+                        show_preview(report)
+
+                with c5:
+                    if st.button("ℹ️", key=f"meta_past_{name}"):
+                        show_metadata(report)
+
+                with c6:
+                    with open(report, "rb") as file:
+                        st.download_button(
+                            "⬇️",
+                            file,
+                            file_name=name,
+                            key=f"dl_past_{name}"
+                        )
+
                 st.divider()
-                
-                # Display reports
-                for report_item in filtered_reports[:50]:
-                    
-                    report = report_item["path"]
-                    metadata = report_item["metadata"]
-                    
-                    name = os.path.basename(report)
-                    size = os.path.getsize(report)/1024
-                    time_mod = datetime.fromtimestamp(os.path.getmtime(report))
-                    
-                    c1,c2,c3,c4,c5,c6 = st.columns([2.5,2,1,0.5,0.5,0.5])
-                    
-                    with c1:
-                        st.write(f"📄 {name}")
-                    
-                    with c2:
-                        st.write(time_mod.strftime("%Y-%m-%d %H:%M"))
-                    
-                    with c3:
-                        st.write(f"{size:.1f} KB")
-                    
-                    with c4:
-                        if st.button("👁", key=f"preview_past_{name}"):
-                            show_preview(report)
-                    
-                    with c5:
-                        if st.button("ℹ️", key=f"meta_past_{name}"):
-                            show_metadata(report)
-                    
-                    with c6:
-                        with open(report,"rb") as file:
-                            st.download_button(
-                                "⬇️",
-                                file,
-                                file_name=name,
-                                key=f"dl_past_{name}"
-                            )
-                    
-                    st.divider()
-                
-                if len(filtered_reports) > 50:
-                    st.info(f"ℹ️ Showing first 50 reports. Total: {len(filtered_reports)}")
-            
-            else:
-                st.info("📭 No reports found")
-        
+
+            if len(filtered_reports) > 50:
+                st.info(f"ℹ️ Showing first 50 reports. Total: {len(filtered_reports)}")
+
         else:
-            st.warning("⚠️ Output folder not found")
-    
+            st.info("📭 No reports found")
+
     else:
-        st.error("❌ OneDrive not detected")
+        st.warning("⚠️ Output folder not found")

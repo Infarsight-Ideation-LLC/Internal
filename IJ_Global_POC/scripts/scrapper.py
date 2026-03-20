@@ -266,10 +266,11 @@ def run_scraper():
         print(structured_data)
  
         # OneDrive auto detection
-        onedrive_path = os.getenv("OneDriveCommercial") or os.getenv("OneDrive")
+        #onedrive_path = os.getenv("OneDriveCommercial") or os.getenv("OneDrive")
  
-        output_dir = os.path.join(onedrive_path, "IJ Global Extracted File")
- 
+        #output_dir = os.path.join(onedrive_path, "IJ Global Extracted File")
+        output_dir = "output"
+
         os.makedirs(output_dir, exist_ok=True)
  
         if isinstance(structured_data, str):
