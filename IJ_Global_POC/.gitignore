@@ -2,4 +2,3 @@ __pycache__/
 *.pyc
 config/credentials.json
 .env
-output/
