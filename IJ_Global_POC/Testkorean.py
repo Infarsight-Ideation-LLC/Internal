@@ -1,38 +1,28 @@
 import os
 import json
 from datetime import datetime
-from playwright.sync_api import sync_playwright
+import requests
 from docx import Document
 from openai import AzureOpenAI
 from dotenv import load_dotenv
 
-# Load .env for LOCAL
-load_dotenv()
 
 URL = "https://englishdart.fss.or.kr/dsbh001/main.do?rcpNo=20260310901403"
-
+load_dotenv()
 # ==============================
-# SAFE ENV LOADER (LOCAL + CLOUD)
+# LOAD SECRETS (SAFE)
 # ==============================
 
-def get_env(key):
-    try:
-        import streamlit as st
-        if key in st.secrets:
-            return st.secrets[key]
-    except:
-        pass
-    
-    return os.getenv(key)
+
 
 # ==============================
 # OPENAI CLIENT
 # ==============================
 
 client = AzureOpenAI(
-    api_key=get_env("AZURE_OPENAI_API_KEY"),
-    api_version=get_env("AZURE_OPENAI_API_VERSION"),
-    azure_endpoint=get_env("AZURE_OPENAI_ENDPOINT")
+    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+    api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
+    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
 )
 
 # ==============================
@@ -41,34 +31,11 @@ client = AzureOpenAI(
 
 def scrape_text():
 
-    with sync_playwright() as p:
+    print("Opening page...")
 
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+    response = requests.get(URL, timeout=60)
 
-        print("Opening page...")
-
-        page.goto(URL, timeout=60000)
-
-        page.wait_for_load_state("domcontentloaded")
-        page.wait_for_load_state("networkidle")
-
-        page.wait_for_timeout(3000)
-
-        frames = page.frames
-
-        full_text = ""
-
-        for frame in frames:
-            try:
-                text = frame.locator("body").inner_text(timeout=5000)
-                full_text += text + "\n"
-            except:
-                pass
-
-        browser.close()
-
-        return full_text
+    return response.text
 
 # ==============================
 # OPENAI EXTRACTION
@@ -122,7 +89,7 @@ Output JSON format:
 """
 
     response = client.chat.completions.create(
-        model=get_env("AZURE_OPENAI_DEPLOYMENT"),
+        model=os.getenv("AZURE_OPENAI_DEPLOYMENT"),
         messages=[
             {"role": "system", "content": "You extract structured financial project data."},
             {"role": "user", "content": prompt}
