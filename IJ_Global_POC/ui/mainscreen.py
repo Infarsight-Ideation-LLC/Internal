@@ -11,7 +11,6 @@ from io import BytesIO
 from docx import Document
 import pandas as pd
 
-
 # ---------- PROJECT ROOT ----------
 
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -562,10 +561,9 @@ def show_metadata(file_path):
         st.write(f"**Region:** {region}")
         st.write(f"**Industry Type:** {industry_type}")
         if metadata_loaded and source_url != "N/A":
-            st.markdown( f"**Source URL:** [🔗 Open Link]({source_url})")
+            st.write(f"**Source URL:** {source_url[:50]}...")
     
-            
-            
+    st.markdown("---")
     
     if st.button("❌ Close", use_container_width=True):
 
@@ -773,64 +771,40 @@ if st.session_state.current_tab == "Run Scraper":
     
             # Check if Korean website is selected
             if website == "Korea Dart":
-                # Run Korean scraper
-                process = subprocess.Popen(
-                    [sys.executable,"-m","Testkorean"]
-                )
+                # Run Korean scraper directly
+                import Testkorean
+                with st.spinner("Running Korean scraper..."):
+                    Testkorean.run()
             else:
-                # Run normal scraper
-                process = subprocess.Popen(
-                    [sys.executable,"-m","scripts.scrapper"]
-                )
-    
-            progress = 0
-            step = 1
-    
-            while process.poll() is None:
-    
-                progress += 0.01
-    
-                if progress > 0.95:
-                    progress = 0.95
-    
-                progress_bar.progress(progress)
-    
-                # step indicator
-                if progress > 0.20 and step == 1:
-                    step = 2
-                    step_indicator.info("Step 2/4 : Opening website")
-    
-                elif progress > 0.45 and step == 2:
-                    step = 3
-                    step_indicator.info("Step 3/4 : Extracting project data")
-    
-                elif progress > 0.70 and step == 3:
-                    step = 4
-                    step_indicator.info("Step 4/4 : Generating reports")
-    
-                # check generated reports
-                current_files = 0
-                if os.path.exists(output_dir):
-                    current_files = len(glob.glob(os.path.join(output_dir,"*.docx")))
-    
-                new_records = current_files - initial_files
-    
-                record_counter.metric("Processed Records", new_records)
-                
-                # Store session reports
-                if os.path.exists(output_dir):
-                    session_files = glob.glob(os.path.join(output_dir,"*.docx"))
-                    st.session_state.session_reports = session_files[initial_files:]
-    
-                time.sleep(0.4)
-    
+                # Run normal scraper in a separate process
+                import scripts.scrapper
+                import multiprocessing
+                with st.spinner("Running scraper..."):
+                    p = multiprocessing.Process(target=scripts.scrapper.run_scraper)
+                    p.start()
+                    p.join()
+
             progress_bar.progress(1.0)
-    
+
             loader.empty()
-    
+
             step_indicator.success("✅ Scraping Completed")
-    
+
             st.balloons()
+
+            # Update records after completion
+            current_files = 0
+            if os.path.exists(output_dir):
+                current_files = len(glob.glob(os.path.join(output_dir,"*.docx")))
+
+            new_records = current_files - initial_files
+
+            record_counter.metric("Processed Records", new_records)
+            
+            # Store session reports
+            if os.path.exists(output_dir):
+                session_files = glob.glob(os.path.join(output_dir,"*.docx"))
+                st.session_state.session_reports = session_files[initial_files:]
     
     st.divider()
     
